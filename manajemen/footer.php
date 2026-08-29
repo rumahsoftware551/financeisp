@@ -3,7 +3,7 @@
     <div class="pull-right hidden-xs">
       <b>Version</b> 1.0
     </div>
-    <a href="https://setiawan007.github.io/"><strong>Copyright &copy; 2022</strong> - Sistem Informasi Laporan Keuangan</a>
+    <strong>&copy; <?php echo date('Y'); ?> FinanceISP</strong> &middot; Sistem Informasi Keuangan
   </footer>
 
   
@@ -56,6 +56,15 @@
 <script>
   $(document).ready(function(){
 
+   var currentPage = window.location.pathname.split('/').pop() || 'index.php';
+   $('.sidebar-menu a').each(function(){
+     var target = ($(this).attr('href') || '').split('?')[0];
+     if(target === currentPage){
+       $(this).closest('li').addClass('active');
+       $(this).closest('.treeview').addClass('active menu-open');
+     }
+   });
+
    // $(".edit").hide();
 
    $('#table-datatable').DataTable({
@@ -94,10 +103,12 @@
     datasets : [
     {
       label: 'Pemasukan',
-      fillColor : "rgba(51, 240, 113, 0.61)",
-      strokeColor : "rgba(11, 246, 88, 0.61)",
-      highlightFill: "rgba(220,220,220,0.75)",
-      highlightStroke: "rgba(220,220,220,1)",
+      fillColor : "rgba(32, 183, 165, 0.12)",
+      strokeColor : "rgba(32, 183, 165, 1)",
+      pointColor: "rgba(32, 183, 165, 1)",
+      pointStrokeColor: "#ffffff",
+      highlightFill: "rgba(32, 183, 165, 0.2)",
+      highlightStroke: "rgba(32, 183, 165, 1)",
       data : [
       <?php
       for($bulan=1;$bulan<=12;$bulan++){
@@ -119,10 +130,12 @@
     },
     {
       label: 'Pengeluaran',
-      fillColor : "rgba(255, 51, 51, 0.8)",
-      strokeColor : "rgba(248, 5, 5, 0.8)",
-      highlightFill : "rgba(151,187,205,0.75)",
-      highlightStroke : "rgba(151,187,205,1)",
+      fillColor : "rgba(239, 91, 103, 0.1)",
+      strokeColor : "rgba(239, 91, 103, 1)",
+      pointColor: "rgba(239, 91, 103, 1)",
+      pointStrokeColor: "#ffffff",
+      highlightFill : "rgba(239, 91, 103, 0.2)",
+      highlightStroke : "rgba(239, 91, 103, 1)",
       data : [
       <?php
       for($bulan=1;$bulan<=12;$bulan++){
@@ -161,10 +174,10 @@
     datasets : [
     {
       label: 'Pemasukan',
-      fillColor : "rgba(51, 240, 113, 0.61)",
-      strokeColor : "rgba(11, 246, 88, 0.61)",
-      highlightFill: "rgba(220,220,220,0.75)",
-      highlightStroke: "rgba(220,220,220,1)",
+      fillColor : "rgba(32, 183, 165, 0.7)",
+      strokeColor : "rgba(32, 183, 165, 1)",
+      highlightFill: "rgba(32, 183, 165, 0.85)",
+      highlightStroke: "rgba(32, 183, 165, 1)",
       data : [
       <?php
       $tahun = mysqli_query($koneksi,"select distinct year(transaksi_tanggal) as tahun from transaksi order by year(transaksi_tanggal) asc");
@@ -185,10 +198,10 @@
     },
     {
       label: 'Pengeluaran',
-      fillColor : "rgba(255, 51, 51, 0.8)",
-      strokeColor : "rgba(248, 5, 5, 0.8)",
-      highlightFill : "rgba(151,187,205,0.75)",
-      highlightStroke : "rgba(254, 29, 29, 0)",
+      fillColor : "rgba(239, 91, 103, 0.7)",
+      strokeColor : "rgba(239, 91, 103, 1)",
+      highlightFill : "rgba(239, 91, 103, 0.85)",
+      highlightStroke : "rgba(239, 91, 103, 1)",
       data : [
       <?php
       $tahun = mysqli_query($koneksi,"select distinct year(transaksi_tanggal) as tahun from transaksi order by year(transaksi_tanggal) asc");
@@ -214,25 +227,32 @@
 
 
   window.onload = function(){
-    var ctx = document.getElementById("grafik1").getContext("2d");
-    window.myBar = new Chart(ctx).Bar(barChartData, {
-     responsive : true,
-     animation: true,
-     barValueSpacing : 5,
-     barDatasetSpacing : 1,
-     tooltipFillColor: "rgba(0,0,0,0.8)",
-     multiTooltipTemplate: "<%= datasetLabel %> - Rp.<%= value.toLocaleString() %>,-"
-   });
+    var monthlyCanvas = document.getElementById("grafik1");
+    if(monthlyCanvas){
+      window.financeMonthlyChart = new Chart(monthlyCanvas.getContext("2d")).Line(barChartData, {
+       responsive : true,
+       animation: true,
+       bezierCurve: true,
+       datasetFill: false,
+       pointDotRadius: 3,
+       scaleGridLineColor: "rgba(229,235,243,0.7)",
+       tooltipFillColor: "rgba(6,42,91,0.92)",
+       multiTooltipTemplate: "<%= datasetLabel %> - Rp.<%= value.toLocaleString() %>,-"
+     });
+    }
 
-    var ctx = document.getElementById("grafik2").getContext("2d");
-    window.myBar = new Chart(ctx).Bar(barChartData2, {
-     responsive : true,
-     animation: true,
-     barValueSpacing : 5,
-     barDatasetSpacing : 1,
-     tooltipFillColor: "rgba(0,0,0,0.8)",
-     multiTooltipTemplate: "<%= datasetLabel %> - Rp.<%= value.toLocaleString() %>,-"
-   });
+    var yearlyCanvas = document.getElementById("grafik2");
+    if(yearlyCanvas){
+      window.financeYearlyChart = new Chart(yearlyCanvas.getContext("2d")).Bar(barChartData2, {
+       responsive : true,
+       animation: true,
+       barValueSpacing : 10,
+       barDatasetSpacing : 3,
+       scaleGridLineColor: "rgba(229,235,243,0.7)",
+       tooltipFillColor: "rgba(6,42,91,0.92)",
+       multiTooltipTemplate: "<%= datasetLabel %> - Rp.<%= value.toLocaleString() %>,-"
+     });
+    }
 
   }
 

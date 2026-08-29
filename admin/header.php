@@ -1,9 +1,17 @@
+<?php
+include '../koneksi.php';
+session_start();
+if (!isset($_SESSION['status']) || $_SESSION['status'] != "administrator_logedin") {
+  header("location:../index.php?alert=belum_login");
+  exit;
+}
+?>
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Administrator - Sistem Informasi Keuangan</title>
+  <title>Administrator - FinanceISP</title>
   
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <link rel="stylesheet" href="../assets/bower_components/bootstrap/dist/css/bootstrap.min.css">
@@ -19,18 +27,11 @@
   <link rel="stylesheet" href="../assets/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
   <link rel="stylesheet" href="../assets/bower_components/bootstrap-daterangepicker/daterangepicker.css">
   <link rel="stylesheet" href="../assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-
-  <?php 
-  include '../koneksi.php';
-  session_start();
-  if($_SESSION['status'] != "administrator_logedin"){
-    header("location:../index.php?alert=belum_login");
-  }
-  ?>
+  <link rel="stylesheet" href="../assets/dist/css/financeisp-modern.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700,800">
 
 </head>
-<body class="hold-transition skin-blue sidebar-mini">
+<body class="hold-transition skin-blue sidebar-mini financeisp-ui">
 
   <style>
     #table-datatable {
@@ -44,8 +45,8 @@
 
     <header class="main-header">
       <a href="index.php" class="logo">
-        <span class="logo-mini"><b><i class="fa fa-money"></i></b> </span>
-        <span class="logo-lg"><b>SI</b>Keuangan</span>
+        <span class="logo-mini"><span class="brand-mark"><i class="fa fa-line-chart"></i></span></span>
+        <span class="logo-lg"><span class="brand-mark"><i class="fa fa-line-chart"></i></span><span class="brand-name">FinanceISP</span></span>
       </a>
       <nav class="navbar navbar-static-top">
         <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
@@ -100,7 +101,7 @@
         </div>
 
         <ul class="sidebar-menu" data-widget="tree">
-          <li class="header">MAIN NAVIGATION</li>
+          <li class="header">MENU UTAMA</li>
 
           <li>
             <a href="index.php">
