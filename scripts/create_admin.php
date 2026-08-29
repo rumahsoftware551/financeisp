@@ -5,6 +5,15 @@ if (PHP_SAPI !== 'cli') {
     exit;
 }
 
+$nginxEnvironment = '/etc/nginx/snippets/financeisp-db.conf';
+if (is_readable($nginxEnvironment)) {
+    foreach (file($nginxEnvironment, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+        if (preg_match('/^fastcgi_param\s+(FINANCEISP_DB_[A-Z]+)\s+(.+);$/', trim($line), $matches)) {
+            putenv($matches[1] . '=' . trim($matches[2], "\"'"));
+        }
+    }
+}
+
 require dirname(__DIR__) . '/koneksi.php';
 
 $username = trim(readline('Username administrator [admin]: '));
