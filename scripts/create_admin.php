@@ -40,16 +40,30 @@ if (strlen($password) < 12) {
 $hash = password_hash($password, PASSWORD_DEFAULT);
 $level = 'administrator';
 
-$stmt = mysqli_prepare(
+$find = mysqli_prepare(
     $koneksi,
-    'INSERT INTO user (user_nama, user_username, user_password, user_foto, user_level)
-     VALUES (?, ?, ?, "", ?)
-     ON DUPLICATE KEY UPDATE
-       user_nama = VALUES(user_nama),
-       user_password = VALUES(user_password),
-       user_level = VALUES(user_level)'
+    'SELECT user_id FROM user WHERE user_level = "administrator" ORDER BY user_id LIMIT 1'
 );
-mysqli_stmt_bind_param($stmt, 'ssss', $name, $username, $hash, $level);
+mysqli_stmt_execute($find);
+$existing = mysqli_fetch_assoc(mysqli_stmt_get_result($find));
+
+if ($existing) {
+    $stmt = mysqli_prepare(
+        $koneksi,
+        'UPDATE user
+         SET user_nama = ?, user_username = ?, user_password = ?, user_level = ?
+         WHERE user_id = ?'
+    );
+    mysqli_stmt_bind_param($stmt, 'ssssi', $name, $username, $hash, $level, $existing['user_id']);
+} else {
+    $stmt = mysqli_prepare(
+        $koneksi,
+        'INSERT INTO user (user_nama, user_username, user_password, user_foto, user_level)
+         VALUES (?, ?, ?, "", ?)'
+    );
+    mysqli_stmt_bind_param($stmt, 'ssss', $name, $username, $hash, $level);
+}
+
 mysqli_stmt_execute($stmt);
 
 fwrite(STDOUT, "Administrator berhasil dibuat atau diperbarui.\n");
