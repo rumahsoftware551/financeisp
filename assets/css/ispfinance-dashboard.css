@@ -1,0 +1,25 @@
+.isp-kpi-grid{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+ gap:20px;
+}
+.isp-kpi-card{
+ background:#fff;
+ border-radius:16px;
+ padding:22px;
+ box-shadow:0 8px 25px rgba(7,26,61,.08);
+ border:1px solid #dde5f0;
+}
+.isp-kpi-title{
+ color:#66758c;
+ font-size:13px;
+}
+.isp-kpi-value{
+ color:#071a3d;
+ font-size:26px;
+ font-weight:700;
+ margin-top:8px;
+}
+.isp-dashboard-section{
+ margin-top:25px;
+}
