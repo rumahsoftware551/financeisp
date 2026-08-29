@@ -1,0 +1,31 @@
+name: Import source main branch
+
+on:
+  push:
+    paths:
+      - .github/workflows/import-source.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Import project snapshot
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EXPECTED_TARGET_SHA: ${{ github.sha }}
+        run: |
+          git clone --depth 1 --branch main --single-branch https://github.com/Setiawan007/Sistem-Informasi-Keuangan.git source
+          cd source
+          rm -f .github/workflows/main.yml
+          curl -sSfL "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${EXPECTED_TARGET_SHA}/.github/workflows/import-source.yml" -o .github/workflows/import-source.yml
+          git checkout --orphan imported-main
+          git config user.name "Repository Import"
+          git config user.email "noreply@github.com"
+          git add -A
+          git commit -m "Import Sistem-Informasi-Keuangan project snapshot"
+          git remote add target "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push target imported-main:main --force-with-lease=refs/heads/main:${EXPECTED_TARGET_SHA}
